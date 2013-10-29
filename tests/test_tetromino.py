@@ -1,5 +1,4 @@
-from tytrys.tetromino import Square
-from tytrys.basic import Coordinate, Direction
+from tytrys.game_objects import Coordinate, Square, Direction
 from unittest import TestCase
 
 
@@ -15,7 +14,7 @@ class TestTetromino(TestCase):
         self.assertEqual(square.x, 0)
         self.assertEqual(square.y, 0)
 
-        coords = square.coords
+        coords = square.coordinates
         self.assertIsNotNone(coords)
         self.assertEqual(len(coords), 4)
         self.assertEqual(coords,
@@ -29,7 +28,7 @@ class TestTetromino(TestCase):
         Move result should give coordinate like move but actual coords should not change
         """
         square = Square(0, 0)
-        coords = square.coords
+        coords = square.coordinates
         results = square.move_result(Direction.Down)
         self.assertEqual(results,
                          [Coordinate(0, -1),
@@ -44,7 +43,7 @@ class TestTetromino(TestCase):
 
     def test_move_result_up(self):
         square = Square(0, 0)
-        coords = square.coords
+        coords = square.coordinates
         results = square.move_result(Direction.Up)
         self.assertEqual(results,
                          [Coordinate(0, 1),
@@ -59,7 +58,7 @@ class TestTetromino(TestCase):
 
     def test_move_result_left(self):
         square = Square(0, 0)
-        coords = square.coords
+        coords = square.coordinates
         results = square.move_result(Direction.Left)
         self.assertEqual(results,
                          [Coordinate(-1, 0),
@@ -74,7 +73,7 @@ class TestTetromino(TestCase):
 
     def test_move_result_right(self):
         square = Square(0, 0)
-        coords = square.coords
+        coords = square.coordinates
         results = square.move_result(Direction.Right)
         self.assertEqual(results,
                          [Coordinate(1, 0),
@@ -90,7 +89,7 @@ class TestTetromino(TestCase):
     def test_move_down(self):
         square = Square(0, 0)
         square.move(Direction.Down)
-        coords = square.coords
+        coords = square.coordinates
         self.assertIsNotNone(coords)
         self.assertEqual(len(coords), 4)
         self.assertEqual(coords,
@@ -102,7 +101,7 @@ class TestTetromino(TestCase):
     def test_move_up(self):
         square = Square(0, 0)
         square.move(Direction.Up)
-        coords = square.coords
+        coords = square.coordinates
         self.assertIsNotNone(coords)
         self.assertEqual(len(coords), 4)
         self.assertEqual(coords,
@@ -114,7 +113,7 @@ class TestTetromino(TestCase):
     def test_move_left(self):
         square = Square(0, 0)
         square.move(Direction.Left)
-        coords = square.coords
+        coords = square.coordinates
         self.assertIsNotNone(coords)
         self.assertEqual(len(coords), 4)
         self.assertEqual(coords,
@@ -125,8 +124,8 @@ class TestTetromino(TestCase):
 
     def test_move_right(self):
         square = Square(0, 0)
-        square.move(Direction.Up)
-        coords = square.coords
+        square.move(Direction.Right)
+        coords = square.coordinates
         self.assertIsNotNone(coords)
         self.assertEqual(len(coords), 4)
         self.assertEqual(coords,
