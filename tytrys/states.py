@@ -1,3 +1,8 @@
+from objects import Board, Square
+import renderer
+from renderer import Color
+
+
 class Status(object):
     Created = 0
     Running = 1
@@ -8,41 +13,34 @@ class State(object):
     """
     defines a state that the game can be in
     """
-    def __init__(self):
+    def __init__(self, window):
         self.status = Status.Created
-
-    def start(self):
-        """
-        Called when state is first started, initialization code should go here
-        """
-        self.status = Status.Running
+        self.window = window
+        self.elapsed_time = 0
 
     def status(self):
-        """
-        Return status of state
-        """
         return self.status
 
     def update(self, delta):
-        """
-        advances state delta seconds
-        """
         pass
-
-    def draw(self, window):
-        """
-        Draw self onto window
-        """
-        pass
-
-    def exit(self):
-        """
-        Called when trying to exit, perform cleanup here
-        """
-        self.status = Status.Finished
 
 
 class GameState(State):
     """
     state that actually plays the game
     """
+    def __init__(self, window):
+        super().__init__(window)
+        self.board = Board(30, 40)
+        self.board_window = window.subwin(self.board.height+2, self.board.width + 2, 0, 0)
+        self.current_piece = Square(4, 4)
+        self.current_piece.color = Color.Blue
+
+    def update(self, delta):
+        self.elapsed_time += delta
+
+    def draw(self):
+        renderer.draw_board(self.board, self.board_window)
+        renderer.draw_tetromino(self.current_piece, self.board_window)
+        self.window.refresh()
+
