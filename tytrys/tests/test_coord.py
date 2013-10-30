@@ -1,4 +1,4 @@
-from tytrys.game_objects import Coordinate, Direction
+from tytrys.objects import Coordinate, Direction
 from unittest import TestCase
 
 

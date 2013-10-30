@@ -1,4 +1,4 @@
-from tytrys.game_objects import Board, Coordinate
+from tytrys.objects import Board, Coordinate
 from unittest import TestCase
 
 #todo: test lock_coordinates()

@@ -91,6 +91,7 @@ class Tetromino(object):
         self.x = x
         self.y = y
         self.coordinates = self.__class__.generate_coordinate(x, y)
+        self.color = None
 
     @classmethod
     def generate_coordinate(cls, x, y):
