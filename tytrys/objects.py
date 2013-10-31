@@ -1,4 +1,5 @@
 from functools import total_ordering
+from renderer import Color
 
 
 class Direction(object):
@@ -61,17 +62,17 @@ class Board(object):
                 return False
         return True
 
-    def lock_coordinates(self, coordinates, lock_value):
+    def lock_tetromino(self, tetromino):
         """
         Lock passed coordinates to board with lock_value,
         throws RuntimeException if coordinates are not valid
 
         """
-        if not self.are_valid_coordinates(coordinates):
+        if not self.are_valid_coordinates(tetromino.coordinates):
             raise RuntimeError('Tired to lock invalid coordinates')
 
-        for coordinate in coordinates:
-            self.rows[coordinate.y][coordinates.x] = lock_value
+        for coordinate in tetromino.coordinates:
+            self.rows[coordinate.y][coordinate.x] = tetromino.color
 
     def clear_full_rows(self):
         """Remove filled rows and Return number of removed rows"""
@@ -87,11 +88,11 @@ class Tetromino(object):
     """
     Defines methods used by all tetrominoes
     """
-    def __init__(self, x, y):
+    def __init__(self, x, y, color=Color.Green):
         self.x = x
         self.y = y
+        self.color = color
         self.coordinates = self.__class__.generate_coordinate(x, y)
-        self.color = None
 
     @classmethod
     def generate_coordinate(cls, x, y):
@@ -118,3 +119,7 @@ class Square(Tetromino):
                 Coordinate(x+1, y),
                 Coordinate(x+1, y-1),
                 Coordinate(x, y-1)]
+
+
+def random_tetromino(x, y):
+    return Square(x, y, Color.Green)

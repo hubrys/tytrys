@@ -26,23 +26,26 @@ def initialize_colors():
     curses.init_pair(Color.White,   curses.COLOR_BLACK, curses.COLOR_WHITE)
 
 
-def draw_board_square(window, x, y, color):
+def draw_square(x, y, color, window):
     dimensions = window.getmaxyx()
-    # minus 1 is for window border
-    window.addch(dimensions[0] - y - 1, x + 1, ord(' '), curses.color_pair(color))
+    window.addch(dimensions[0] - 2 - y, x + 1, ord(' '), curses.color_pair(color))
 
 
 def draw_board(board, window):
+    if board is None:
+        return
+
     window.border()
+    for y, row in enumerate(board.rows):
+        for x, color in enumerate(row):
+            if color is not None:
+                draw_square(x, y, color, window)
 
 
 def draw_tetromino(tetromino, window):
     """Draw coordinates on screen for tetromino"""
-    for coordinate in tetromino.coordinates:
-        draw_board_square(window, coordinate.x, coordinate.y, tetromino.color)
+    if tetromino is None:
+        return
 
-
-def clear_tetromino(tetromino, window):
-    """Clear coordinates on screen for tetromino"""
     for coordinate in tetromino.coordinates:
-        draw_board_square(window, coordinate.x, coordinate.y, Color.Black)
+        draw_square(coordinate.x, coordinate.y, tetromino.color, window)
