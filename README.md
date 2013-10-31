@@ -13,18 +13,26 @@ Why?
 ----
 Because why not? And I don't like to sleep.
 
-Installation
-------------
+How do I install it?
+--------------------
 I don't know yet. This is the first real program I've written in python and I haven't gotten that far yet.
 
-Things in the Pipeline
-----------------------
+What do I need to run it?
+-------------------------
+See above
+
+What else do you have planned?
+------------------------------
 * Scores
 * Sideways Movement
 * Rotation
 * More Tetrominoes
 * Less Awkward Crashing
 * Levels
+* Splash Screen
+* Pause Screen
+* Menu Screen
+* Arrow key Support
 
 
 

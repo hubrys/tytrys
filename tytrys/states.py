@@ -1,4 +1,6 @@
+
 from objects import Board, Square, Direction, random_tetromino
+import curses
 import renderer
 from renderer import Color
 
@@ -35,13 +37,13 @@ class GameState(State):
         self.debug_window = window.subwin(0, 35)
         self.next_piece = random_tetromino(20, 20)
         self.current_piece = random_tetromino(20, 20)
-        self.drop_time = 4000
-
-        self.board.rows[0] = [Color.Red, None]*15
+        self.drop_time = 1000
+        self.current_key = -1
 
     def update(self, delta):
         self.elapsed_time += delta
-        self.debug_info()
+        self.get_user_input()
+        self.handle_user_input()
 
         if self.elapsed_time >= self.drop_time:
             if self.board.are_valid_coordinates(self.current_piece.move_result(Direction.Down)):
@@ -56,10 +58,25 @@ class GameState(State):
 
         self.draw()
 
+    def get_user_input(self):
+        self.current_key = self.window.getch()
+
+    def handle_user_input(self):
+        direction = None
+        if self.current_key == ord('j'):
+            direction = Direction.Left
+        elif self.current_key == ord('l'):
+            direction = Direction.Right
+        if direction is not None:
+            if self.board.are_valid_coordinates(self.current_piece.move_result(direction)):
+                self.current_piece.move(direction)
+                self.board_window.clear()
+
     def draw(self):
         renderer.draw_board(self.board, self.board_window)
         renderer.draw_tetromino(self.current_piece, self.board_window)
         self.board_window.refresh()
+        self.debug_info()
 
     def debug_info(self):
         window = self.debug_window
@@ -72,6 +89,3 @@ class GameState(State):
 
         window.addstr(7, 1, "Elapsed Time: " + str(self.elapsed_time))
         window.refresh()
-
-
-

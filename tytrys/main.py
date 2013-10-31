@@ -14,6 +14,7 @@ def main(main_window):
     #renderer.draw_tetromino(square, board_window)
     #board_window.refresh()
     #main_window.getch()
+    main_window.nodelay(1)
     renderer.initialize()
     game_state = GameState(main_window)
     while game_state.status != Status.Finished:
