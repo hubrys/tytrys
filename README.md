@@ -24,8 +24,7 @@ See above
 What else do you have planned?
 ------------------------------
 * Scores
-* Rotation
-* More Tetrominoes
+* Randomized Tetrominoes
 * Less Awkward Crashing
 * Levels
 * Splash Screen

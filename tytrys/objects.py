@@ -1,3 +1,4 @@
+import random
 from functools import total_ordering
 from renderer import Color
 
@@ -14,6 +15,7 @@ class Direction(object):
 @total_ordering
 class Coordinate(object):
     """holds x,y coordinates to a point (integer)"""
+
     def __init__(self, x, y):
         """Set x and y values of new Coordinate to values"""
         self.x = x
@@ -45,10 +47,11 @@ class Coordinate(object):
 
 class Board(object):
     """Defines playable area, holds locked pieces"""
+
     def __init__(self, width, height):
         self.width = width
         self.height = height
-        self.rows = [[None]*width for x in range(height)]
+        self.rows = [[None] * width for x in range(height)]
 
     def are_valid_coordinates(self, coordinates):
         """
@@ -80,7 +83,7 @@ class Board(object):
         self.rows = [row for row in self.rows if None in row]
         rows_removed = old_count - len(self.rows)
         for x in range(rows_removed):
-            self.rows.append([None]*self.width)
+            self.rows.append([None] * self.width)
         return rows_removed
 
 
@@ -88,15 +91,16 @@ class Tetromino(object):
     """
     Defines methods used by all tetrominoes
     """
+
     def __init__(self, x, y, color=Color.Green):
         self.x = x
         self.y = y
         self.color = color
-        self.coordinates = self.__class__.generate_coordinate(x, y)
-        self.direction = 0
+        self.rotation = 0
+        self.coordinates = self.__class__.generate_coordinates(x, y, self.rotation)
 
     @classmethod
-    def generate_coordinate(cls, x, y):
+    def generate_coordinates(cls, x, y, direction):
         """
         generates coordinates for shape at (x,y),
         default implementation returns empty list
@@ -106,35 +110,180 @@ class Tetromino(object):
     def move(self, direction):
         """Move Tetromino one unit in specified direction"""
         self.coordinates = self.move_result(direction)
+        self.x, self.y = self.coordinates[0].x, self.coordinates[0].y
 
     def move_result(self, direction):
         """Return coordinates of Tetromino if move(direction) was called"""
         return [x.get_new(direction) for x in self.coordinates]
 
+    def rotate(self, direction):
+        if direction == Direction.CCW:
+            self.rotation += 1
+        else:
+            self.rotation -= 1
+        self.coordinates = self.__class__.generate_coordinates(self.x, self.y, self.rotation % 4)
+
     def rotate_result(self, direction):
-        
-        return
+        if direction == Direction.CCW:
+            rotation = self.rotation + 1
+        else:
+            rotation = self.rotation - 1
+        return self.__class__.generate_coordinates(self.x, self.y, rotation % 4)
 
 
 class Square(Tetromino):
     """defines behavior for square tetromino"""
+
     @classmethod
-    def generate_coordinate(cls, x, y):
+    def generate_coordinates(cls, x, y, direction):
         return [Coordinate(x, y),
-                Coordinate(x+1, y),
-                Coordinate(x+1, y-1),
-                Coordinate(x, y-1)]
+                Coordinate(x + 1, y),
+                Coordinate(x + 1, y - 1),
+                Coordinate(x, y - 1)]
 
 
 class Line(Tetromino):
     """defines behavior of line tetromino"""
+
     @classmethod
-    def generate_coordinate(cls, x, y):
-        return [Coordinate(x, y + 1),
-                Coordinate(x, y),
-                Coordinate(x, y - 1),
-                Coordinate(x, y - 2)]
+    def generate_coordinates(cls, x, y, direction):
+        if direction % 2 == 0:
+            return [Coordinate(x, y),
+                    Coordinate(x, y + 1),
+                    Coordinate(x, y - 1),
+                    Coordinate(x, y - 2)]
+        else:
+            return [Coordinate(x, y),
+                    Coordinate(x - 1, y),
+                    Coordinate(x + 1, y),
+                    Coordinate(x + 2, y)]
+
+
+class Zig(Tetromino):
+    """Defines behavior of zig tetromino"""
+
+    @classmethod
+    def generate_coordinates(cls, x, y, direction):
+        if direction % 2 == 0:
+            return [Coordinate(x, y),
+                    Coordinate(x, y - 1),
+                    Coordinate(x - 1, y),
+                    Coordinate(x - 1, y + 1)]
+        else:
+            return [Coordinate(x, y),
+                    Coordinate(x - 1, y),
+                    Coordinate(x, y + 1),
+                    Coordinate(x + 1, y + 1)]
+
+
+class Zag(Tetromino):
+    """Defines behavior of zig tetromino"""
+
+    @classmethod
+    def generate_coordinates(cls, x, y, direction):
+        if direction % 2 == 0:
+            return [Coordinate(x, y),
+                    Coordinate(x, y - 1),
+                    Coordinate(x + 1, y),
+                    Coordinate(x + 1, y + 1)]
+        else:
+            return [Coordinate(x, y),
+                    Coordinate(x + 1, y),
+                    Coordinate(x, y + 1),
+                    Coordinate(x - 1, y + 1)]
+
+
+class Ell(Tetromino):
+    """defines behavior of reverse-ell tetromino"""
+
+    @classmethod
+    def generate_coordinates(cls, x, y, orientation):
+        if orientation == 0:
+            return [Coordinate(x, y),
+                    Coordinate(x - 1, y),
+                    Coordinate(x + 1, y),
+                    Coordinate(x + 1, y + 1)]
+        if orientation == 1:
+            return [Coordinate(x, y),
+                    Coordinate(x, y + 1),
+                    Coordinate(x, y - 1),
+                    Coordinate(x + 1, y - 1)]
+
+        if orientation == 2:
+            return [Coordinate(x, y),
+                    Coordinate(x - 1, y),
+                    Coordinate(x - 1, y - 1),
+                    Coordinate(x + 1, y)]
+        else:
+            return [Coordinate(x, y),
+                    Coordinate(x, y + 1),
+                    Coordinate(x - 1, y + 1),
+                    Coordinate(x, y - 1)]
+
+
+class ReverseEll(Tetromino):
+    """defines behavor of ell tetromino"""
+
+    @classmethod
+    def generate_coordinates(cls, x, y, orientation):
+        if orientation == 0:
+            return [Coordinate(x, y),
+                    Coordinate(x - 1, y),
+                    Coordinate(x - 1, y + 1),
+                    Coordinate(x + 1, y)]
+        elif orientation == 1:
+            return [Coordinate(x, y),
+                    Coordinate(x, y - 1),
+                    Coordinate(x, y + 1),
+                    Coordinate(x + 1, y + 1)]
+        elif orientation == 2:
+            return [Coordinate(x, y),
+                    Coordinate(x - 1, y),
+                    Coordinate(x + 1, y),
+                    Coordinate(x + 1, y - 1)]
+        else:
+            return [Coordinate(x, y),
+                    Coordinate(x, y + 1),
+                    Coordinate(x, y - 1),
+                    Coordinate(x - 1, y - 1)]
+
+
+class Tee(Tetromino):
+    """defines behavior of Tee tetromino"""
+
+    @classmethod
+    def generate_coordinates(cls, x, y, orientation):
+        if orientation == 0:
+            return [Coordinate(x, y),
+                    Coordinate(x - 1, y),
+                    Coordinate(x + 1, y),
+                    Coordinate(x, y + 1)]
+        if orientation == 1:
+            return [Coordinate(x, y),
+                    Coordinate(x, y + 1),
+                    Coordinate(x + 1, y),
+                    Coordinate(x, y - 1)]
+        if orientation == 2:
+            return [Coordinate(x, y),
+                    Coordinate(x - 1, y),
+                    Coordinate(x + 1, y),
+                    Coordinate(x, y - 1)]
+        else:
+            return [Coordinate(x, y),
+                    Coordinate(x, y + 1),
+                    Coordinate(x - 1, y),
+                    Coordinate(x, y - 1)]
+
+
+tetrominoes = ((Square, Color.Green),
+               (Line, Color.Blue),
+               (Zig, Color.Cyan),
+               (Zag, Color.White),
+               (Ell, Color.Magenta),
+               (ReverseEll, Color.Red),
+               (Tee, Color.Yellow))
 
 
 def random_tetromino(x, y):
-    return Line(x, y, Color.Green)
+    tetromino = random.choice(tetrominoes)
+    return tetromino[0](x, y, tetromino[1])

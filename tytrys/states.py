@@ -73,13 +73,21 @@ class GameState(State):
             direction = Direction.Left
         elif self.current_key == ord('l'):
             direction = Direction.Right
+        elif self.current_key == ord('i'):
+            direction = Direction.CCW
         elif self.current_key == ord('q'):
             self.status = Status.Finished
         if direction is not None:
-            if self.board.are_valid_coordinates(
-                    self.current_piece.move_result(direction)):
-                self.current_piece.move(direction)
-                self.board_window.clear()
+            if direction == Direction.CCW or direction == Direction.CW:
+                if self.board.are_valid_coordinates(
+                        self.current_piece.rotate_result(direction)):
+                    self.current_piece.rotate(direction)
+                    self.board_window.clear()
+            else:
+                if self.board.are_valid_coordinates(
+                        self.current_piece.move_result(direction)):
+                    self.current_piece.move(direction)
+                    self.board_window.clear()
 
     def draw(self):
         renderer.draw_board(self.board, self.board_window)
