@@ -32,13 +32,14 @@ class GameState(State):
     """
     def __init__(self, window):
         super().__init__(window)
-        self.board = Board(30, 40)
-        self.board_window = window.subwin(self.board.height + 2, self.board.width + 2, 0, 0)
+        self.board = Board(10, 22)
+        self.board_window = window.subwin(self.board.height, self.board.width + 2, 0, 0)
         self.debug_window = window.subwin(0, 35)
-        self.next_piece = random_tetromino(20, 20)
-        self.current_piece = random_tetromino(20, 20)
+        self.next_piece = random_tetromino(5, 20)
+        self.current_piece = random_tetromino(5, 20)
         self.drop_time = 1000
         self.current_key = -1
+        self.lines = 0
 
     def update(self, delta):
         self.elapsed_time += delta
@@ -46,14 +47,19 @@ class GameState(State):
         self.handle_user_input()
 
         if self.elapsed_time >= self.drop_time:
-            if self.board.are_valid_coordinates(self.current_piece.move_result(Direction.Down)):
+            if self.board.are_valid_coordinates(
+                    self.current_piece.move_result(Direction.Down)):
                 self.current_piece.move(Direction.Down)
                 self.window.clear()
             else:
                 self.board.lock_tetromino(self.current_piece)
                 self.current_piece = self.next_piece
-                self.next_piece = random_tetromino(20, 20)
-                # todo: check to see if next piece is allowed.
+                self.next_piece = random_tetromino(5, 20)
+                rows_removed = self.board.clear_full_rows()
+                if rows_removed:
+                    self.lines += rows_removed
+                    self.window.clear()
+
             self.elapsed_time -= self.drop_time
 
         self.draw()
@@ -67,8 +73,11 @@ class GameState(State):
             direction = Direction.Left
         elif self.current_key == ord('l'):
             direction = Direction.Right
+        elif self.current_key == ord('q'):
+            self.status = Status.Finished
         if direction is not None:
-            if self.board.are_valid_coordinates(self.current_piece.move_result(direction)):
+            if self.board.are_valid_coordinates(
+                    self.current_piece.move_result(direction)):
                 self.current_piece.move(direction)
                 self.board_window.clear()
 
@@ -88,4 +97,5 @@ class GameState(State):
             window.addstr(3 + i, 1, "\t\t(" + str(coordinate.x) + ", " + str(coordinate.y) + ")")
 
         window.addstr(7, 1, "Elapsed Time: " + str(self.elapsed_time))
+        window.addstr(8, 1, "Lines Cleared: " + str(self.lines))
         window.refresh()

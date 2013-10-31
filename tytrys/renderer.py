@@ -28,7 +28,8 @@ def initialize_colors():
 
 def draw_square(x, y, color, window):
     dimensions = window.getmaxyx()
-    window.addch(dimensions[0] - 2 - y, x + 1, ord(' '), curses.color_pair(color))
+    if x < dimensions[1]-1 and y < dimensions[0]-2:
+        window.addch(dimensions[0] - 2 - y, x + 1, ord('+'), curses.color_pair(color))
 
 
 def draw_board(board, window):

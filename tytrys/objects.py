@@ -93,6 +93,7 @@ class Tetromino(object):
         self.y = y
         self.color = color
         self.coordinates = self.__class__.generate_coordinate(x, y)
+        self.direction = 0
 
     @classmethod
     def generate_coordinate(cls, x, y):
@@ -110,6 +111,10 @@ class Tetromino(object):
         """Return coordinates of Tetromino if move(direction) was called"""
         return [x.get_new(direction) for x in self.coordinates]
 
+    def rotate_result(self, direction):
+        
+        return
+
 
 class Square(Tetromino):
     """defines behavior for square tetromino"""
@@ -121,5 +126,15 @@ class Square(Tetromino):
                 Coordinate(x, y-1)]
 
 
+class Line(Tetromino):
+    """defines behavior of line tetromino"""
+    @classmethod
+    def generate_coordinate(cls, x, y):
+        return [Coordinate(x, y + 1),
+                Coordinate(x, y),
+                Coordinate(x, y - 1),
+                Coordinate(x, y - 2)]
+
+
 def random_tetromino(x, y):
-    return Square(x, y, Color.Green)
+    return Line(x, y, Color.Green)

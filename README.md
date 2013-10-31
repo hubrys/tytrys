@@ -24,7 +24,6 @@ See above
 What else do you have planned?
 ------------------------------
 * Scores
-* Sideways Movement
 * Rotation
 * More Tetrominoes
 * Less Awkward Crashing
@@ -33,6 +32,7 @@ What else do you have planned?
 * Pause Screen
 * Menu Screen
 * Arrow key Support
+* Better Time Counting
 
 
 
