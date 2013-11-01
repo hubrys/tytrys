@@ -25,10 +25,11 @@ I've tested this in Python 3.3, other versions may have problems
 
 What else do you have planned?
 ------------------------------
-* Fix formatting
+* Fix
+* Real Game Over Menu
 * Menu Screen
 * Splash Screen
 * Handle Terminal Resizing
-* Document Code
+* Document Code (Probably should do this before I forget how it works)
 * Colorful Background
 * Instructions
