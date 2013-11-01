@@ -1,1 +1,2 @@
+#right now this doesn't do what it is suppose to do. Need to give it an absolute path
 python ../tytrys/main.py

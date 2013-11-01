@@ -23,15 +23,12 @@ See above
 
 What else do you have planned?
 ------------------------------
-* Scores
-* Randomized Tetrominoes
-* Less Awkward Crashing
-* Levels
-* Splash Screen
-* Pause Screen
+* Right justify text
+* Menu on game over
 * Menu Screen
-* Arrow key Support
-* Better Time Counting
-
-
+* Splash Screen
+* Handle Terminal Resizing
+* Document Code
+* Colorful Background
+* Instructions
 

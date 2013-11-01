@@ -72,7 +72,7 @@ class Board(object):
 
         """
         if not self.are_valid_coordinates(tetromino.coordinates):
-            raise RuntimeError('Tired to lock invalid coordinates')
+            raise RuntimeError('Tried to lock invalid coordinates')
 
         for coordinate in tetromino.coordinates:
             self.rows[coordinate.y][coordinate.x] = tetromino.color
@@ -106,6 +106,10 @@ class Tetromino(object):
         default implementation returns empty list
         """
         return []
+
+    def set_location(self, x, y):
+        self.coordinates = self.__class__.generate_coordinates(x, y, self.rotation % 4)
+        self.x, self.y = x, y
 
     def move(self, direction):
         """Move Tetromino one unit in specified direction"""
@@ -149,14 +153,14 @@ class Line(Tetromino):
     def generate_coordinates(cls, x, y, direction):
         if direction % 2 == 0:
             return [Coordinate(x, y),
-                    Coordinate(x, y + 1),
-                    Coordinate(x, y - 1),
-                    Coordinate(x, y - 2)]
-        else:
-            return [Coordinate(x, y),
                     Coordinate(x - 1, y),
                     Coordinate(x + 1, y),
                     Coordinate(x + 2, y)]
+        else:
+            return [Coordinate(x, y),
+                    Coordinate(x, y + 1),
+                    Coordinate(x, y - 1),
+                    Coordinate(x, y - 2)]
 
 
 class Zig(Tetromino):
@@ -166,31 +170,30 @@ class Zig(Tetromino):
     def generate_coordinates(cls, x, y, direction):
         if direction % 2 == 0:
             return [Coordinate(x, y),
-                    Coordinate(x, y - 1),
-                    Coordinate(x - 1, y),
-                    Coordinate(x - 1, y + 1)]
-        else:
-            return [Coordinate(x, y),
                     Coordinate(x - 1, y),
                     Coordinate(x, y + 1),
                     Coordinate(x + 1, y + 1)]
+        else:
+            return [Coordinate(x, y),
+                    Coordinate(x, y - 1),
+                    Coordinate(x - 1, y),
+                    Coordinate(x - 1, y + 1)]
 
 
 class Zag(Tetromino):
     """Defines behavior of zig tetromino"""
-
     @classmethod
     def generate_coordinates(cls, x, y, direction):
         if direction % 2 == 0:
             return [Coordinate(x, y),
-                    Coordinate(x, y - 1),
-                    Coordinate(x + 1, y),
-                    Coordinate(x + 1, y + 1)]
-        else:
-            return [Coordinate(x, y),
                     Coordinate(x + 1, y),
                     Coordinate(x, y + 1),
                     Coordinate(x - 1, y + 1)]
+        else:
+            return [Coordinate(x, y),
+                    Coordinate(x, y - 1),
+                    Coordinate(x + 1, y),
+                    Coordinate(x + 1, y + 1)]
 
 
 class Ell(Tetromino):
@@ -198,18 +201,18 @@ class Ell(Tetromino):
 
     @classmethod
     def generate_coordinates(cls, x, y, orientation):
-        if orientation == 0:
+        if orientation == 3:
             return [Coordinate(x, y),
                     Coordinate(x - 1, y),
                     Coordinate(x + 1, y),
                     Coordinate(x + 1, y + 1)]
-        if orientation == 1:
+        if orientation == 0:
             return [Coordinate(x, y),
                     Coordinate(x, y + 1),
                     Coordinate(x, y - 1),
                     Coordinate(x + 1, y - 1)]
 
-        if orientation == 2:
+        if orientation == 1:
             return [Coordinate(x, y),
                     Coordinate(x - 1, y),
                     Coordinate(x - 1, y - 1),
@@ -226,17 +229,17 @@ class ReverseEll(Tetromino):
 
     @classmethod
     def generate_coordinates(cls, x, y, orientation):
-        if orientation == 0:
+        if orientation == 1:
             return [Coordinate(x, y),
                     Coordinate(x - 1, y),
                     Coordinate(x - 1, y + 1),
                     Coordinate(x + 1, y)]
-        elif orientation == 1:
+        elif orientation == 2:
             return [Coordinate(x, y),
                     Coordinate(x, y - 1),
                     Coordinate(x, y + 1),
                     Coordinate(x + 1, y + 1)]
-        elif orientation == 2:
+        elif orientation == 3:
             return [Coordinate(x, y),
                     Coordinate(x - 1, y),
                     Coordinate(x + 1, y),
