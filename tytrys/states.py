@@ -1,40 +1,16 @@
-from objects import Board, Square, Direction, random_tetromino
+from objects import Board, Direction, random_tetromino
 import curses
 import renderer
-from renderer import Color
+import game
+from game import Status
 
 
-class Status(object):
-    Running = 0
-    Paused = 1
-    Finished = 2
-    Restart = 3
-
-
-class State(object):
-    """
-    defines a state that the game can be in
-    """
-
-    def __init__(self, window):
-        self.status = Status.Running
-        self.window = window
-        self.elapsed_time = 0
-
-    def status(self):
-        return self.status
-
-    def update(self, delta):
-        pass
-
-
-class GameState(State):
+class GameState(game.State):
     """
     state that actually plays the game
     """
-
     def __init__(self, window):
-        super().__init__(window)
+        super(GameState, self).__init__(window)
         #These lines are so that I don't have to stare at warnings, restart sets these to the right values
         self.board = Board(10, 22)
         self.next_piece = random_tetromino(0, 0)
@@ -61,22 +37,26 @@ class GameState(State):
         self.score = 0
         self.view_modified = True
 
-    def get_user_input(self):
-        self.current_key = self.window.getch()
+    def handle_messages(self):
+        while not self.messages.empty():
+            if self.messages.get() == "restart":
+                self.restart()
 
     def handle_user_input(self):
         direction = None
-        if self.current_key in (ord('j'), ord('J'), curses.KEY_LEFT):
+        key_pressed = self.window.getch()
+        if key_pressed in (ord('j'), ord('J'), curses.KEY_LEFT):
             direction = Direction.Left
-        elif self.current_key in (ord('l'), ord('L'), curses.KEY_RIGHT):
+        elif key_pressed in (ord('l'), ord('L'), curses.KEY_RIGHT):
             direction = Direction.Right
-        elif self.current_key in (ord('i'), ord('I'), curses.KEY_UP):
+        elif key_pressed in (ord('i'), ord('I'), curses.KEY_UP):
             direction = Direction.CCW
-        elif self.current_key in (ord('k'), ord('K'), curses.KEY_DOWN):
+        elif key_pressed in (ord('k'), ord('K'), curses.KEY_DOWN):
             direction = Direction.CW
-        elif self.current_key in (ord('q'), ord('Q')):
-            self.status = Status.Paused
-        elif self.current_key == ord(' '):
+        elif key_pressed in (ord('q'), ord('Q')):
+            self.view_modified = True
+            game.switch_to_state("paused")
+        elif key_pressed == ord(' '):
             self.drop_current_piece()
         if direction is not None:
             if direction == Direction.CCW or direction == Direction.CW:
@@ -120,7 +100,6 @@ class GameState(State):
 
     def update(self, delta):
         self.elapsed_time += delta
-        self.get_user_input()
         self.handle_user_input()
 
         if self.elapsed_time >= self.drop_time:
@@ -152,10 +131,8 @@ class GameState(State):
             self.view_modified = True
             self.elapsed_time -= self.drop_time
 
-        self.draw()
 
-
-class PauseState(State):
+class PauseState(game.State):
     """
     state the game enters when game is paused
 
@@ -163,9 +140,9 @@ class PauseState(State):
     """
     def __init__(self, window):
         super().__init__(window)
-        self.choices = (("Continue", Status.Running),
-                        ("Restart", Status.Restart),
-                        ("Quit", Status.Finished))
+        self.choices = (("Continue", lambda: game.switch_to_state("game")),
+                        ("Restart", lambda: game.switch_to_state("game", "restart")),
+                        ("Quit", lambda: game.switch_to_state("finished")))
         self.selected_choice = 0
 
     def update(self, delta):
@@ -175,7 +152,7 @@ class PauseState(State):
             self.draw_choices()
             key_press = self.window.getch()
             if key_press in (ord(' '), curses.KEY_ENTER, 10):
-                self.status = self.choices[self.selected_choice][1]
+                self.choices[self.selected_choice][1]()
                 break
             elif key_press in (ord('i'), ord('I'), curses.KEY_UP):
                 self.selected_choice = (self.selected_choice - 1) % len(self.choices)
