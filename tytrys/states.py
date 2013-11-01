@@ -9,6 +9,7 @@ class GameState(game.State):
     """
     state that actually plays the game
     """
+
     def __init__(self, window):
         super(GameState, self).__init__(window)
         #These lines are so that I don't have to stare at warnings, restart sets these to the right values
@@ -41,6 +42,7 @@ class GameState(game.State):
         while not self.messages.empty():
             if self.messages.get() == "restart":
                 self.restart()
+                self.window.clear()
 
     def handle_user_input(self):
         direction = None
@@ -125,7 +127,8 @@ class GameState(game.State):
                             self.level += 1
                             self.drop_time *= .75
                 except RuntimeError:
-                    self.restart()
+                    game.add_state_and_switch("game_over", GameOverState(self.window, self.score))
+                    #self.restart()
                     #self.status = Status.Restart
 
             self.view_modified = True
@@ -138,6 +141,7 @@ class PauseState(game.State):
 
     breaks the point of the state as its easier to stop looping and handle events
     """
+
     def __init__(self, window):
         super().__init__(window)
         self.choices = (("Continue", lambda: game.switch_to_state("game")),
@@ -162,6 +166,7 @@ class PauseState(game.State):
         self.window.clear()
 
     def draw_choices(self):
+        self.window.border()
         dimensions = self.window.getmaxyx()
         x_middle = dimensions[1] // 2
         y_middle = dimensions[0] // 2
@@ -173,3 +178,28 @@ class PauseState(game.State):
                 choice[0],
                 curses.A_REVERSE if i == self.selected_choice else curses.A_NORMAL)
         self.window.refresh()
+
+
+class GameOverState(game.State):
+    def __init__(self, window, score):
+        super(GameOverState, self).__init__(window)
+        self.score = score
+        self.view_modified = True
+
+    def update(self, delta):
+        key_pressed = self.window.getch()
+        if key_pressed == ord(' '):
+            game.switch_to_state("game", "restart")
+            game.remove_state("game_over")
+        elif key_pressed != -1:
+            game.switch_to_state("finished")
+
+    def draw(self):
+        if self.view_modified:
+            self.window.clear()
+            self.window.border()
+            self.window.addstr(6, 1, "Game Over")
+            self.window.addstr(10, 1, "Score: " + str(self.score))
+            self.window.addstr(14, 1, "Press Space")
+            self.window.addstr(15, 1, "      to Restart")
+            self.view_modified = False

@@ -3,7 +3,7 @@ import queue
 
 _states = {}
 current_state = None
-globals = {}
+store = {}
 finished = False
 keyboard = None
 _keyboard_function = None
@@ -29,6 +29,11 @@ def add_state(identifier, state):
     global _states
     if isinstance(state, State):
         _states[identifier] = state
+
+
+def remove_state(identifier):
+    global _states
+    del _states[identifier]
 
 
 def switch_to_state(identifier, message=None):
@@ -84,6 +89,7 @@ class Finished(State):
     def update(self, delta):
         global finished
         finished = True
+
 
 class StateIdentifierNotFoundError(Exception):
     pass

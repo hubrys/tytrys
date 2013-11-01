@@ -13,22 +13,20 @@ Why?
 ----
 Because why not? And I don't like to sleep.
 
-How do I install it?
+How do I run it?
 --------------------
-I don't know yet. This is the first real program I've written in python and I haven't gotten that far yet.
+run main.py located in the tytrys folder
 
 What do I need to run it?
 -------------------------
-See above
+I've tested this in Python 3.3, other versions may have problems
 
 What else do you have planned?
 ------------------------------
-* Right justify text
-* Menu on game over
+* Fix formatting
 * Menu Screen
 * Splash Screen
 * Handle Terminal Resizing
 * Document Code
 * Colorful Background
 * Instructions
-
