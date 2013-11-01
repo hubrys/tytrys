@@ -225,7 +225,7 @@ class Ell(Tetromino):
 
 
 class ReverseEll(Tetromino):
-    """defines behavor of ell tetromino"""
+    """defines behavior of ell tetromino"""
 
     @classmethod
     def generate_coordinates(cls, x, y, orientation):

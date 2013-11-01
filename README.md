@@ -15,7 +15,9 @@ Because why not? And I don't like to sleep.
 
 How do I run it?
 --------------------
-run main.py located in the tytrys folder
+run tytrys.py located in the tytrys folder
+From the root directory
+    python tytrys/tytrys.py
 
 What do I need to run it?
 -------------------------
