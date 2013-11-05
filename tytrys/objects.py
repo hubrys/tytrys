@@ -49,6 +49,13 @@ class Board(object):
     """Defines playable area, holds locked pieces"""
 
     def __init__(self, width, height):
+        """Initializes a board of specified dimentions
+
+        Arguments:
+        width -- widht of board
+        height -- height of the board
+
+        """
         self.width = width
         self.height = height
         self.rows = [[None] * width for x in range(height)]
@@ -57,7 +64,12 @@ class Board(object):
         """
         Return true if all coordinates are valid on this Board
 
-        coordinate is valid if between points (0,0) and (width, height)"""
+        A coordinate is valid if between points (0,0) and (width, height)
+
+        Arguments:
+        coordinates -- list of coordinates to check
+
+        """
         for coordinate in coordinates:
             if not ((0 <= coordinate.x < self.width)
                     and (0 <= coordinate.y < self.height)
@@ -66,8 +78,7 @@ class Board(object):
         return True
 
     def lock_tetromino(self, tetromino):
-        """
-        Lock passed coordinates to board with lock_value,
+        """Lock passed coordinates to board with lock_value,
         throws RuntimeException if coordinates are not valid
 
         """
@@ -97,7 +108,8 @@ class Tetromino(object):
         self.y = y
         self.color = color
         self.rotation = 0
-        self.coordinates = self.__class__.generate_coordinates(x, y, self.rotation)
+        self.coordinates = \
+            self.__class__.generate_coordinates(x, y, self.rotation)
 
     @classmethod
     def generate_coordinates(cls, x, y, direction):
@@ -108,7 +120,8 @@ class Tetromino(object):
         return []
 
     def set_location(self, x, y):
-        self.coordinates = self.__class__.generate_coordinates(x, y, self.rotation % 4)
+        self.coordinates = \
+            self.__class__.generate_coordinates(x, y, self.rotation % 4)
         self.x, self.y = x, y
 
     def move(self, direction):
@@ -125,14 +138,18 @@ class Tetromino(object):
             self.rotation += 1
         else:
             self.rotation -= 1
-        self.coordinates = self.__class__.generate_coordinates(self.x, self.y, self.rotation % 4)
+        self.coordinates = self.__class__.generate_coordinates(
+            self.x,
+            self.y,
+            self.rotation % 4)
 
     def rotate_result(self, direction):
         if direction == Direction.CCW:
             rotation = self.rotation + 1
         else:
             rotation = self.rotation - 1
-        return self.__class__.generate_coordinates(self.x, self.y, rotation % 4)
+        return self.__class__.generate_coordinates(self.x, self.y,
+                                                   rotation % 4)
 
 
 class Square(Tetromino):
@@ -182,6 +199,7 @@ class Zig(Tetromino):
 
 class Zag(Tetromino):
     """Defines behavior of zig tetromino"""
+
     @classmethod
     def generate_coordinates(cls, x, y, direction):
         if direction % 2 == 0:
@@ -288,5 +306,6 @@ tetrominoes = ((Square, Color.Green),
 
 
 def random_tetromino(x, y):
+    """Return random tetromino from all possible choices"""
     tetromino = random.choice(tetrominoes)
     return tetromino[0](x, y, tetromino[1])

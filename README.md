@@ -21,15 +21,11 @@ From the root directory
 
 What do I need to run it?
 -------------------------
-I've tested this in Python 3.3, other versions may have problems
+Tytrys requires Python version 3.3
 
 What else do you have planned?
 ------------------------------
-* Fix
-* Real Game Over Menu
-* Menu Screen
 * Splash Screen
 * Handle Terminal Resizing
-* Document Code (Probably should do this before I forget how it works)
 * Colorful Background
 * Instructions
