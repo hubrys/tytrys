@@ -214,19 +214,54 @@ class MainMenuState(MenuState):
     def __init__(self, window):
         super().__init__(window)
         self.choices = (("New Game", lambda: game.switch_to_state("game", "restart")),
+                        ("Help", lambda: game.add_state_and_switch(
+                            "help", HelpState(self.window, "paused"))),
                         ("Quit", lambda: game.switch_to_state("finished")))
         self.lines_to_skip = 4
-        self.line_to_start = 10
+        self.line_to_start = 9
 
     def draw(self):
         if self.view_modified:
             self.view_modified = False
             self.window.clear()
             self.window.border()
-            self.window.addstr(6, 6, "TYTRYS!!!")
+            self.window.addstr(4, 6, "TYTRYS!!!")
+            self.window.addstr(5, 6, "---------")
 
         if self.choice_changed:
             self.choice_changed = False
+            self.draw_menu()
+
+
+class HelpState(MenuState):
+    """Info Screen - displays controls"""
+
+    def __init__(self, window, identifier):
+        super().__init__(window)
+
+        def go_back():
+            game.remove_state("help")
+            game.switch_to_state(self.state_identifier)
+
+        self.choices = [("Return", go_back)]
+        self.view_modified = True
+        self.state_identifier = identifier
+        self.line_to_start = 18
+
+    def draw(self):
+        if self.view_modified:
+            self.view_modified = False
+            self.window.clear()
+            self.window.border()
+            self.window.addstr(3, 1, "Controls:")
+            self.window.addstr(5, 1, "Move:")
+            self.window.addstr(6, 1, "  Left:  j   left")
+            self.window.addstr(7, 1, "  Right: l   right")
+            self.window.addstr(9, 1, "Rotate:")
+            self.window.addstr(10, 1, "  CW:    i   up")
+            self.window.addstr(11, 1, "  CCW:   k   down")
+            self.window.addstr(13, 1, "Drop Piece:  Space")
+            self.window.addstr(15, 1, "Pause: q")
             self.draw_menu()
 
 
@@ -237,9 +272,11 @@ class PauseState(MenuState):
         super().__init__(window)
         self.choices = (("Continue", lambda: game.switch_to_state("game")),
                         ("Restart", lambda: game.switch_to_state("game", "restart")),
+                        ("Help", lambda: game.add_state_and_switch(
+                            "help", HelpState(self.window, "paused"))),
                         ("Quit", lambda: game.switch_to_state("finished")))
         self.lines_to_skip = 4
-        self.line_to_start = 6
+        self.line_to_start = 5
 
 
 class GameOverState(MenuState):

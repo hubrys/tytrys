@@ -28,4 +28,3 @@ What else do you have planned?
 * Splash Screen
 * Handle Terminal Resizing
 * Colorful Background
-* Instructions
